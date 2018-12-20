@@ -1,7 +1,7 @@
 node{
       
       stage('SCM Checkout'){
-         git 'https://github.com/rajnikhattarrsinha/java-tomcat-maven-example'
+         git 'https://github.com/dc1977/java-tomcat-maven-example'
       }
   
       stage('Mvn Build'){
@@ -16,14 +16,14 @@ node{
       }  
       
     stage('Build Docker Image'){
-         sh 'docker build -t rajnikhattarrsinha/javatomcatreliancedemo:2.0.0 .'
+         sh 'docker build -t dc1977/javatomcatreliancedemo:2.0.0 .'
       }  
    
       stage('Publish Docker Image'){
          withCredentials([string(credentialsId: 'dockerpwd', variable: 'dockerPWD')]) {
-              sh "docker login -u rajnikhattarrsinha -p ${dockerPWD}"
+              sh "docker login -u dc1977 -p ${dockerPWD}"
          }
-        sh 'docker push rajnikhattarrsinha/javatomcatreliancedemo:2.0.0'
+        sh 'docker push dc1977/javatomcatreliancedemo:2.0.0'
       }
 
    stage('Stop running containers'){        
@@ -37,7 +37,7 @@ node{
    stage('Pull Docker Image and Deploy'){        
          
             def dockerContainerName = 'javatomcatsampledemo-$JOB_NAME-$BUILD_NUMBER'
-            def dockerRun= "sudo docker run -p 8080:8080 -d --name ${dockerContainerName} rajnikhattarrsinha/javatomcatreliancedemo:2.0.0"         
+            def dockerRun= "sudo docker run -p 8080:8080 -d --name ${dockerContainerName} dc1977/javatomcatreliancedemo:2.0.0"         
             sshagent(['dockerdeployserver2']) {
               sh "ssh -o StrictHostKeyChecking=no ubuntu@35.168.86.36 ${dockerRun}"              
          }
